@@ -95,7 +95,7 @@ entity Categories : cuid {
 
 entity SubCategories : cuid {
     subCategory : String(80);
-    category    : Association to Categories;
+    category    : Association to Categories;            //category category_ID
 };
 
 entity Departments : cuid {

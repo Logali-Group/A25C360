@@ -23,12 +23,62 @@ annotate services.Products with {
     };
     category @Common: {
         Text : category.category,
-        TextArrangement : #TextOnly
+        TextArrangement : #TextOnly,
+        ValueList : {
+            $Type : 'Common.ValueListType',
+            CollectionPath : 'VH_Categories',
+            Parameters : [
+                {
+                    $Type : 'Common.ValueListParameterInOut',
+                    LocalDataProperty : category_ID,
+                    ValueListProperty : 'ID'
+                }
+            ]
+        }
     };
     subCategory @Common: {
         Text : subCategory.subCategory,
-        TextArrangement : #TextOnly
+        TextArrangement : #TextOnly,
+        ValueList : {
+            $Type : 'Common.ValueListType',
+            CollectionPath : 'VH_SubCategories',
+            Parameters : [
+                {
+                    $Type : 'Common.ValueListParameterIn',      //Filter
+                    LocalDataProperty : category_ID,            //Products
+                    ValueListProperty : 'category_ID'           //SubCategories
+                },
+                {
+                    $Type : 'Common.ValueListParameterOut',
+                    LocalDataProperty : subCategory_ID,
+                    ValueListProperty : 'ID'
+                }
+            ]
+        }
     };
+    supplier @Common: {
+        Text : supplier.supplierName,
+        TextArrangement : #TextOnly,
+        ValueList : {
+            $Type : 'Common.ValueListType',
+            CollectionPath : 'Suppliers',
+            Parameters : [
+                {
+                    $Type : 'Common.ValueListParameterInOut',
+                    LocalDataProperty : supplier_ID,
+                    ValueListProperty : 'ID'
+                },
+                {
+                    $Type : 'Common.ValueListParameterDisplayOnly',
+                    ValueListProperty : 'supplier'
+                },
+                {
+                    $Type : 'Common.ValueListParameterDisplayOnly',
+                    ValueListProperty : 'webAddress'
+                }
+            ]
+        }
+    }
 };
 
 
@@ -40,6 +90,14 @@ annotate services.Products with @(
         $Type : 'UI.HeaderInfoType',
         TypeName : 'Product',
         TypeNamePlural : 'Products',
+        Title : {
+            $Type : 'UI.DataField',
+            Value : productName
+        },
+        Description : {
+            $Type : 'UI.DataField',
+            Value : product
+        },
     },
     UI.SelectionFields: [
         product,
@@ -94,5 +152,59 @@ annotate services.Products with @(
         $Type : 'UI.DataPointType',
         Value : rating,
         Visualization : #Rating
-    }
+    },
+    UI.FieldGroup #SupplierAndCategory : {
+        $Type : 'UI.FieldGroupType',
+        Data : [
+            {
+                $Type : 'UI.DataField',
+                Value : supplier_ID
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : category_ID
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : subCategory_ID
+            }
+        ]
+    },
+    UI.FieldGroup #Description: {
+        $Type : 'UI.FieldGroupType',
+        Data : [
+            {
+                $Type : 'UI.DataField',
+                Value : description,
+                Label : ''
+            }
+        ]
+    },
+    UI.FieldGroup #Availability: {
+        $Type : 'UI.FieldGroupType',
+        Data : [
+            {
+                $Type : 'UI.DataField',
+                Value : statu_code,
+                Criticality : statu.criticality,
+                Label : ''
+            }
+        ],        
+    },
+    UI.HeaderFacets  : [
+        {
+            $Type : 'UI.ReferenceFacet',
+            Target : '@UI.FieldGroup#SupplierAndCategory',
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            Target : '@UI.FieldGroup#Description',
+            Label : 'Product Information'
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            Target : '@UI.FieldGroup#Availability',
+            Label : 'Availability'            
+        },
+    ],
 );
