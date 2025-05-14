@@ -13,4 +13,5 @@ service LogaliGroup {
     /** Value Helps */
     entity VH_Categories    as projection on entities.Categories;
     entity VH_SubCategories as projection on entities.SubCategories;
+    entity VH_Departments   as projection on entities.Departments;
 };

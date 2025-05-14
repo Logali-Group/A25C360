@@ -1,5 +1,11 @@
 using {LogaliGroup as services} from '../service';
 
+using from './annotations-suppliers';
+using from './annotations-productdetails';
+using from './annotations-reviews';
+using from './annotations-inventories';
+
+
 annotate services.Products with {
     product     @title: 'Product';
     productName @title: 'Product Name';
@@ -191,6 +197,16 @@ annotate services.Products with @(
             }
         ],        
     },
+    UI.FieldGroup #Price: {
+        $Type : 'UI.FieldGroupType',
+        Data : [
+            {
+                $Type : 'UI.DataField',
+                Value : price,
+                Label : ''
+            }
+        ]
+    },
     UI.HeaderFacets  : [
         {
             $Type : 'UI.ReferenceFacet',
@@ -205,6 +221,44 @@ annotate services.Products with @(
             $Type : 'UI.ReferenceFacet',
             Target : '@UI.FieldGroup#Availability',
             Label : 'Availability'            
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            Target : '@UI.FieldGroup#Price',
+            Label : 'Price'
+        }
+    ],
+    UI.Facets  : [
+        {
+            $Type : 'UI.CollectionFacet',
+            Facets : [
+                {
+                    $Type : 'UI.ReferenceFacet',
+                    Target : 'supplier/@UI.FieldGroup#Supplier',
+                    Label : 'Information'
+                },
+                {
+                    $Type : 'UI.ReferenceFacet',
+                    Target : 'supplier/contact/@UI.FieldGroup#Contacts',
+                    Label : 'Contact Person'
+                },
+            ],
+            Label : 'Supplier Information'
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            Target : 'detail/@UI.FieldGroup#ProductDetails',
+            Label : 'Product Information'
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            Target : 'toReviews/@UI.LineItem',
+            Label : 'Reviews',
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            Target : 'toInventories/@UI.LineItem',
+            Label : 'Inventory Information'
         },
     ],
 );
