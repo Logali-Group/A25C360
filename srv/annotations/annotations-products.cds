@@ -4,19 +4,23 @@ using from './annotations-suppliers';
 using from './annotations-productdetails';
 using from './annotations-reviews';
 using from './annotations-inventories';
+using from './annotations-sales';
+
+annotate services.Products with @odata.draft.enabled;
 
 
 annotate services.Products with {
     product     @title: 'Product';
     productName @title: 'Product Name';
-    description @title: 'Description';
+    description @title: 'Description' @UI.MultiLineText;
     category    @title: 'Category';
     subCategory @title: 'Sub-Category';
     statu       @title: 'Statu';
-    price       @title: 'Price' @Measures.ISOCurrency: currency;
+    price       @title: 'Price' @Measures.ISOCurrency: currency_code;
     rating      @title: 'Rating';
     currency    @title: 'Currency' @Common.IsCurrency;
     supplier    @title: 'Supplier';
+    image @title : 'Image' @UI.IsImage;
 };
 
 annotate services.Products with {
@@ -89,9 +93,18 @@ annotate services.Products with {
 
 
 annotate services.Products with @(
-    Common.SemanticKey  : [
-        product
-    ],
+    // Common.SemanticKey  : [
+    //     product
+    // ],
+    Common.SideEffects: {
+        $Type : 'Common.SideEffectsType',
+        SourceProperties : [
+            supplier_ID
+        ],
+        TargetEntities : [
+            supplier
+        ],
+    },
     UI.HeaderInfo  : {
         $Type : 'UI.HeaderInfoType',
         TypeName : 'Product',
@@ -114,6 +127,10 @@ annotate services.Products with @(
         statu_code
     ],
     UI.LineItem       : [
+        {
+            $Type : 'UI.DataField',
+            Value : image,
+        },
         {
             $Type: 'UI.DataField',
             Value: product
@@ -159,6 +176,16 @@ annotate services.Products with @(
         Value : rating,
         Visualization : #Rating
     },
+    UI.FieldGroup #Image: {
+        $Type : 'UI.FieldGroupType',
+        Data : [
+            {
+                $Type : 'UI.DataField',
+                Value : image,
+                Label : ''
+            }
+        ]
+    },
     UI.FieldGroup #SupplierAndCategory : {
         $Type : 'UI.FieldGroupType',
         Data : [
@@ -193,7 +220,23 @@ annotate services.Products with @(
                 $Type : 'UI.DataField',
                 Value : statu_code,
                 Criticality : statu.criticality,
-                Label : ''
+                Label : '',
+                ![@Common.FieldControl] : {
+                    $edmJson: {
+                        $If:[
+                            {
+                                $Eq:[
+                                    {
+                                        $Path: 'IsActiveEntity'
+                                    },
+                                    false
+                                ]
+                            },
+                            1,
+                            3
+                        ]
+                    }
+                },
             }
         ],        
     },
@@ -208,6 +251,11 @@ annotate services.Products with @(
         ]
     },
     UI.HeaderFacets  : [
+        {
+            $Type : 'UI.ReferenceFacet',
+            Target : '@UI.FieldGroup#Image',
+            Label : '',
+        },
         {
             $Type : 'UI.ReferenceFacet',
             Target : '@UI.FieldGroup#SupplierAndCategory',
@@ -241,24 +289,34 @@ annotate services.Products with @(
                     $Type : 'UI.ReferenceFacet',
                     Target : 'supplier/contact/@UI.FieldGroup#Contacts',
                     Label : 'Contact Person'
-                },
+                }
             ],
-            Label : 'Supplier Information'
+            Label : 'Supplier Information',
+            ID : 'SupplierInformation'
         },
         {
             $Type : 'UI.ReferenceFacet',
-            Target : 'detail/@UI.FieldGroup#ProductDetails',
-            Label : 'Product Information'
+            Target : 'detail/@UI.FieldGroup#Details',
+            Label : 'Product Information',
+            ID : 'ProductInformation'
         },
         {
             $Type : 'UI.ReferenceFacet',
             Target : 'toReviews/@UI.LineItem',
             Label : 'Reviews',
+            ID : 'toReviews'
         },
         {
             $Type : 'UI.ReferenceFacet',
             Target : 'toInventories/@UI.LineItem',
-            Label : 'Inventory Information'
+            Label : 'Inventory Information',
+            ID : 'toInventories'
         },
-    ],
+        {
+            $Type : 'UI.ReferenceFacet',
+            Target : 'toSales/@UI.Chart#ChartLine',
+            Label : 'Sales',
+            ID : 'toSales'
+        }
+    ]
 );

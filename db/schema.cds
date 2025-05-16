@@ -3,24 +3,28 @@ namespace com.logaligroup;
 using {
     cuid,
     managed,
-    sap.common.CodeList
+    sap.common.CodeList,
+    sap.common.Currencies
 } from '@sap/cds/common';
 
 entity Products : cuid, managed {
     product       : String(11);
     productName   : String(80);
+    image         : LargeBinary  @Core.MediaType: imageType  @Core.ContentDisposition.Filename: fileName;
+    imageType     : String       @Core.IsMediaType;
+    fileName      : String;
     description   : LargeString;
     category      : Association to Categories; // category category_ID
     subCategory   : Association to SubCategories; // subCategory subCategory_ID
     statu         : Association to Status; // statu statu_code
     price         : Decimal(6, 2);
     rating        : Decimal(3, 2);
-    currency      : String;
-    detail        : Association to ProductDetails; // detail detail_ID
+    currency      : Association to Currencies;
+    detail        : Composition of ProductDetails; // detail detail_ID
     supplier      : Association to Suppliers; //supplier supplier_ID
     toReviews     : Association to many Reviews
                         on toReviews.product = $self;
-    toInventories : Association to many Inventories
+    toInventories : Composition of  many Inventories
                         on toInventories.product = $self;
     toSales       : Association to many Sales
                         on toSales.product = $self;
@@ -52,16 +56,16 @@ entity Contacts : cuid {
 entity Reviews : cuid {
     rating     : Decimal(3, 2);
     date       : Date;
-    user : String(40);
+    user       : String(40);
     reviewText : LargeString;
     product    : Association to Products; //product product_ID
 };
 
 entity Inventories : cuid {
     stockNumber : String(12);
-    department : Association to Departments;
-    min         : Integer;
-    max         : Integer;
+    department  : Association to Departments;
+    min         : Integer default 0;
+    max         : Integer default 500;
     target      : Integer;
     quantity    : Decimal(6, 3);
     baseUnit    : String default 'EA';
@@ -79,8 +83,8 @@ entity Sales : cuid {
 /** Code List */
 entity Status : CodeList {
     key code        : String(20) enum {
-            InStock         = 'In Stock';
-            OutOfStock      = 'Out of Stock';
+            InStock = 'In Stock';
+            OutOfStock = 'Out of Stock';
             LowAvailability = 'Low Availability';
         };
         criticality : Integer;
@@ -95,7 +99,7 @@ entity Categories : cuid {
 
 entity SubCategories : cuid {
     subCategory : String(80);
-    category    : Association to Categories;            //category category_ID
+    category    : Association to Categories; //category category_ID
 };
 
 entity Departments : cuid {

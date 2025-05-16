@@ -1,116 +1,121 @@
 using {LogaliGroup as service} from '../service';
 
 annotate service.Inventories with {
-    stockNumber @title: 'Stock Number';
-    baseUnit    @title: 'Base Unit' @Common.IsUnit;
+    stockNumber @title: 'Stock Number' @Common.FieldControl : #ReadOnly;
+    baseUnit    @title: 'Base Unit'  @Common.IsUnit @Common.FieldControl : #ReadOnly;
     department  @title: 'Department';
-    quantity    @title: 'Quantity' @Measures.Unit : baseUnit;
-    min         @title: 'Minimun';
-    max         @title: 'Maximun';
+    quantity    @title: 'Quantity'   @Measures.Unit: baseUnit @Common.FieldControl : #ReadOnly;
+    min         @title: 'Minimun' @Common.FieldControl : #ReadOnly;
+    max         @title: 'Maximun' @Common.FieldControl : #ReadOnly;
     target      @title: 'Target';
 };
 
 annotate service.Inventories with {
-    department @Common : { 
-        Text : department.department,
-        TextArrangement : #TextOnly
-     }
+    department @Common: {
+        Text           : department.department,
+        TextArrangement: #TextOnly
+    }
 };
 
 
 annotate service.Inventories with @(
-    UI.HeaderInfo  : {
-        $Type : 'UI.HeaderInfoType',
-        TypeName : 'Inventory',
-        TypeNamePlural : 'Inventories',
-        Title : {
-            $Type : 'UI.DataField',
-            Value : product.productName
+    UI.HeaderInfo           : {
+        $Type         : 'UI.HeaderInfoType',
+        TypeName      : 'Inventory',
+        TypeNamePlural: 'Inventories',
+        Title         : {
+            $Type: 'UI.DataField',
+            Value: product.productName
         },
-        Description : {
-            $Type : 'UI.DataField',
-            Value : product.product
+        Description   : {
+            $Type: 'UI.DataField',
+            Value: product.product
         },
     },
-    UI.LineItem: [
+    UI.LineItem             : [
         {
-            $Type : 'UI.DataField',
-            Value : stockNumber
+            $Type: 'UI.DataField',
+            Value: stockNumber
         },
         {
-            $Type : 'UI.DataField',
-            Value : department_ID
+            $Type: 'UI.DataField',
+            Value: department_ID
         },
         {
-            $Type : 'UI.DataField',
-            Value : quantity
+            $Type : 'UI.DataFieldForAnnotation',
+            Target : '@UI.Chart#Bullet',
+            Label : '',
+            ![@HTML5.CssDefaults] : {
+                $Type : 'HTML5.CssDefaultsType',
+                width : '10rem'
+            }
         },
-        // {
-        //     $Type : 'UI.DataFieldForAnnotation',
-        //     Target : '@UI.Chart#Bullet',
-        // },
+        {
+            $Type: 'UI.DataField',
+            Value: quantity
+        }
     ],
     UI.FieldGroup #Inventory: {
-        $Type : 'UI.FieldGroupType',
+        $Type: 'UI.FieldGroupType',
         Data : [
             {
-                $Type : 'UI.DataField',
-                Value : stockNumber,
+                $Type: 'UI.DataField',
+                Value: stockNumber,
             },
             {
-                $Type : 'UI.DataField',
-                Value : department_ID,
+                $Type: 'UI.DataField',
+                Value: department_ID,
             },
             {
-                $Type : 'UI.DataField',
-                Value : min,
+                $Type: 'UI.DataField',
+                Value: min,
             },
             {
-                $Type : 'UI.DataField',
-                Value : max,
+                $Type: 'UI.DataField',
+                Value: max,
             },
             {
-                $Type : 'UI.DataField',
-                Value : target,
+                $Type: 'UI.DataField',
+                Value: target,
             },
             {
-                $Type : 'UI.DataField',
-                Value : quantity,
+                $Type: 'UI.DataField',
+                Value: quantity,
             }
         ],
     },
-    UI.Facets: [
+    UI.Facets               : [
         {
             $Type : 'UI.ReferenceFacet',
-            Target : '@UI.FieldGroup#Inventory',
+            Target: '@UI.FieldGroup#Inventory',
             Label : 'Inventory Information'
-        },
+        }
     ],
-    UI.DataPoint: {
+    UI.DataPoint  : {
         $Type : 'UI.DataPointType',
-        Value : target,
-        MinimumValue : min,
+        Value : quantity,
+        Title : 'Quantity Status',
+        MinimumValue: min,
         MaximumValue : max,
-        CriticalityCalculation: {
+        CriticalityCalculation : {
             $Type : 'UI.CriticalityCalculationType',
             ImprovementDirection : #Maximize,
             ToleranceRangeLowValue : 300,
-            DeviationRangeLowValue : 0
+            DeviationRangeLowValue : 100
         }
     },
-    UI.Chart #Bullet   : {
+    UI.Chart #Bullet : {
         $Type : 'UI.ChartDefinitionType',
         ChartType : #Bullet,
         Measures : [
-            target
+            quantity
         ],
         MeasureAttributes : [
             {
                 $Type : 'UI.ChartMeasureAttributeType',
                 DataPoint : '@UI.DataPoint',
-                Measure : target
+                Measure : quantity
             }
         ]
     }
 );
-

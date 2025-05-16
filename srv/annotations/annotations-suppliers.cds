@@ -6,9 +6,9 @@ annotate service.Suppliers with {
         Text           : supplierName,
         TextArrangement: #TextOnly
     };
-    supplier     @title: 'Supplier';
-    supplierName @title: 'Supplier Name';
-    webAddress   @title: 'Web Address';
+    supplier     @title: 'Supplier' @Common.FieldControl : #ReadOnly;
+    supplierName @title: 'Supplier Name' @Common.FieldControl : #ReadOnly;
+    webAddress   @title: 'Web Address' @Common.FieldControl : #ReadOnly;
 };
 
 annotate service.Suppliers with @(
