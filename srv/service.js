@@ -30,8 +30,10 @@ module.exports = class LogaliGroup extends cds.ApplicationService {
                 newMax = max + 1;
             } else if (max < max2) {
                 newMax = max2 + 1;
-            } 
-            
+            } else {
+                newMax = max + 1;
+            }
+
             req.data.stockNumber = newMax.toString();
         });
 
