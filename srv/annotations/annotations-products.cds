@@ -20,6 +20,7 @@ annotate services.Products with {
     rating      @title: 'Rating';
     currency    @title: 'Currency' @Common.IsCurrency;
     supplier    @title: 'Supplier';
+    supplierCloud @title: 'Supplier Cloud';
     image @title : 'Image' @UI.IsImage;
 };
 
@@ -88,6 +89,21 @@ annotate services.Products with {
                 }
             ]
         }
+    };
+    supplierCloud @Common: {
+        Text : supplierCloud.SupplierFullName,
+        TextArrangement : #TextOnly,
+        ValueList : {
+            $Type : 'Common.ValueListType',
+            CollectionPath : 'CSuppliers',
+            Parameters : [
+                {
+                    $Type : 'Common.ValueListParameterInOut',
+                    LocalDataProperty : supplierCloud_Supplier,
+                    ValueListProperty : 'ID'
+                }
+            ],
+        },
     }
 };
 
@@ -192,6 +208,10 @@ annotate services.Products with @(
             {
                 $Type : 'UI.DataField',
                 Value : supplier_ID
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : supplierCloud_Supplier,
             },
             {
                 $Type : 'UI.DataField',

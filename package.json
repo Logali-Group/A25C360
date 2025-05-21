@@ -6,6 +6,9 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
+    "@sap-cloud-sdk/connectivity": "^3",
+    "@sap-cloud-sdk/http-client": "^3",
+    "@sap-cloud-sdk/resilience": "^3.26.4",
     "@sap/cds": "^8.9.3",
     "express": "^4.21.2"
   },
@@ -15,5 +18,23 @@
   },
   "scripts": {
     "start": "cds-serve"
+  },
+  "cds": {
+    "requires": {
+      "API_BUSINESS_PARTNER_CLOUD": {
+        "kind": "odata-v2",
+        "model": "srv/external/API_BUSINESS_PARTNER_CLOUD",
+        "credentials": {
+          "url": "https://sandbox.api.sap.com/s4hanacloud/sap/opu/odata/sap/API_BUSINESS_PARTNER"
+        }
+      },
+      "API_BUSINESS_PARTNER_ONPREMISE": {
+        "kind": "odata-v2",
+        "model": "srv/external/API_BUSINESS_PARTNER_ONPREMISE",
+        "credentials": {
+          "url":"http://s4h22.sap4practice.com:8007/sap/opu/odata/sap/API_BUSINESS_PARTNER"
+        }
+      }
+    }
   }
 }

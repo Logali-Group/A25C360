@@ -7,6 +7,10 @@ using {
     sap.common.Currencies
 } from '@sap/cds/common';
 
+using {
+    API_BUSINESS_PARTNER_CLOUD as cloud
+} from '../srv/external/API_BUSINESS_PARTNER_CLOUD';
+
 entity Products : cuid, managed {
     product       : String(11);
     productName   : String(80);
@@ -22,6 +26,7 @@ entity Products : cuid, managed {
     currency      : Association to Currencies;
     detail        : Composition of ProductDetails; // detail detail_ID
     supplier      : Association to Suppliers; //supplier supplier_ID
+    supplierCloud : Association to cloud.A_Supplier;
     toReviews     : Association to many Reviews
                         on toReviews.product = $self;
     toInventories : Composition of  many Inventories
@@ -104,4 +109,11 @@ entity SubCategories : cuid {
 
 entity Departments : cuid {
     department : String(40);
-}
+};
+
+entity Options: CodeList {
+    key code : String(10) enum {
+        A = 'Add';
+        D = 'Discount'
+    };
+};
